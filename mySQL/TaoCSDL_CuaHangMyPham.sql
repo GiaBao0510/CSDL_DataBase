@@ -1,0 +1,172 @@
+/*--Tao bang--*/
+CREATE TABLE NhanVien(
+	maNV CHAR(8) PRIMARY KEY,
+	hoten VARCHAR(100) NOT NULL,
+	ngaysinh DATE NOT NULL,
+	diachi VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	masothue CHAR(10) NOT NULL,
+	gioitinh BOOLEAN NOT NULL,
+	sdt CHAR(10) NOT NULL,
+	cmnd CHAR(10) NOT NULL,
+	matkhau VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE KhachHang(
+	maKH CHAR(8) PRIMARY KEY,
+	hoten VARCHAR(100) NOT NULL,
+	diachi VARCHAR(255),
+	gioitinh BOOLEAN NOT NULL,
+	matkhau VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE BoPhan(
+	maBP CHAR(8) PRIMARY KEY,
+	tenBoPhan VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE LoaiMyPham(
+	maloai CHAR(5) PRIMARY KEY,
+	tenloai VARCHAR(50) NOT NULL,
+	ghichu VARCHAR(255)
+);
+
+CREATE TABLE ThuongHieu(
+	maTH CHAR(5) PRIMARY KEY,
+	tenTH VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE DongMyPham(
+	maDongSP CHAR(5) PRIMARY KEY,
+	tenDongSP VARCHAR(50) NOT NULL,
+	mota VARCHAR(255),
+	congdung VARCHAR(255) NOT NULL,
+	donvitinh VARCHAR(50) NOT NULL,
+	dactinh VARCHAR(50) NOT NULL,
+	NSX DATE NOT NULL,
+	HSD DATE NOT NULL,
+	maloai CHAR(5) NOT NULL,
+   maTH CHAR(5) NOT NULL,
+	FOREIGN KEY (maloai) REFERENCES LoaiMyPham(maloai),
+	FOREIGN KEY (maTH) REFERENCES ThuongHieu(maTH),
+	CHECK (NSX > HSD)
+);
+
+CREATE TABLE MyPham(
+	maMP CHAR(5) PRIMARY KEY,
+	tenMP VARCHAR(50) NOT NULL,
+	maDongSP CHAR(5) NOT NULL,
+	FOREIGN KEY (maDongSP) REFERENCES DongMyPham(maDongSP)
+);
+
+CREATE TABLE NhaCungCap(
+	maNCC CHAR(5) PRIMARY KEY,
+	tenNCC VARCHAR(50) NOT NULL,
+	diachi VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	sdt CHAR(10) NOT NULL,
+	masothue CHAR(10) NOT NULL
+);
+
+CREATE TABLE ThoiDiem(
+	ngaygio DATE PRIMARY key
+);
+
+CREATE TABLE HoaDon(
+	stt_hoaDon INT PRIMARY KEY,
+	ngaylap DATE NOT NULL,
+	Tongtienhang FLOAT NOT NULL,
+	tienthueGTGT FLOAT NOT NULL,
+	giatrihoadon FLOAT NOT NULL,
+	maNV CHAR(8) NOT NULL,
+	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV)
+);
+
+CREATE TABLE PhieuVanChuyen(
+	soPVC INT PRIMARY KEY,
+	ngaylap DATE NOT NULL,
+	diachigiaohang VARCHAR(255) NOT NULL,
+	phivanchuyen FLOAT NOT NULL,
+	stt_hoaDon INT NOT NULL,
+	maNV CHAR(8) NOT NULL,
+	FOREIGN KEY (stt_hoaDon) REFERENCES HoaDon(stt_hoaDon),
+	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV)
+);
+
+CREATE TABLE PhieuChi(
+	sttPhieuChi INT PRIMARY KEY,
+	ngaylap DATE NOT NULL,
+	sotienthanhtoan FLOAT NOT NULL,
+	diengiai VARCHAR(255) NOT NULL,
+	maNCC CHAR(5) NOT NULL,
+	maNV CHAR(8) NOT NULL,
+	FOREIGN KEY (maNCC) REFERENCES NhaCungCap(maNCC),
+	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV)
+);
+
+CREATE TABLE PhieuNhap(
+	sttPhieuNhap INT PRIMARY KEY,
+	ngaylap DATE NOT NULL,
+	tongtiennhap FLOAT NOT NULL,
+	tongthueGTGT FLOAT NOT NULL,
+	tonggiatri FLOAT NOT NULL,
+	maNV CHAR(8) NOT NULL,
+	sttPhieuChi INT NOT NULL,
+	maNCC CHAR(5) NOT NULL,
+	FOREIGN KEY (maNCC) REFERENCES NhaCungCap(maNCC),
+	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV),
+	FOREIGN KEY (sttPhieuChi) REFERENCES PhieuChi(sttPhieuChi)
+);
+
+CREATE TABLE PhieuNopTien(
+	soPT INT PRIMARY KEY,
+	ngaylap DATE NOT NULL,
+	sotien FLOAT NOT NULL,
+	Lydo VARCHAR(255),
+	chungtugoc VARCHAR(100),
+	maNV CHAR(8) NOT NULL,
+	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV)
+);
+
+CREATE TABLE DonGiaMyPham(
+	dongia FLOAT NOT NULL,
+	soluongton INT NOT NULL,
+	ngaygio DATE  NOT NULL,
+	maDongSP CHAR(5) NOT NULL,
+	FOREIGN KEY (ngaygio) REFERENCES ThoiDiem(ngaygio),
+	FOREIGN KEY (maDongSP) REFERENCES DongMyPham(maDongSP)
+);
+
+CREATE TABLE ChiTietPhieuNhap(
+	dongia FLOAT NOT NULL,
+	soluong INT NOT NULL,
+	sttPhieuNhap INT NOT NULL,
+	maDongSP CHAR(5) NOT NULL,
+	FOREIGN KEY (sttPhieuNhap) REFERENCES PhieuNhap(sttPhieuNhap),
+	FOREIGN KEY (maDongSP) REFERENCES DongMyPham(maDongSP)
+);
+
+CREATE TABLE CongTac(
+	maBP CHAR(8) NOT NULL,
+	maNV CHAR(8) NOT NULL,
+	ngaygio DATE  NOT NULL,
+	FOREIGN KEY (maNV) REFERENCES NhanVien(maNV),
+	FOREIGN KEY (maBP) REFERENCES BoPhan(maBP),
+	FOREIGN KEY (ngaygio) REFERENCES ThoiDiem(ngaygio)
+);
+
+CREATE TABLE ChiTietHoaDon(
+	soluong INT NOT NULL,cuahangmyphamcuahangmypham
+	dongia FLOAT NOT NULL,
+	maDongSP CHAR(5) NOT NULL,
+	stt_hoaDon INT NOT NULL,
+	FOREIGN KEY (stt_hoaDon) REFERENCES HoaDon(stt_hoaDon),
+	FOREIGN KEY (maDongSP) REFERENCES DongMyPham(maDongSP)
+);
+
+CREATE TABLE ChiTietCungCapMyPham(
+	maDongSP CHAR(5) NOT NULL,
+	maNCC CHAR(5) NOT NULL,
+	FOREIGN KEY (maNCC) REFERENCES NhaCungCap(maNCC),
+	FOREIGN KEY (maDongSP) REFERENCES DongMyPham(maDongSP)
+);
